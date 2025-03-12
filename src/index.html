@@ -15,26 +15,40 @@
     <aside id="projects-section">
       <h2>Projects</h2>
       <ul id="projects-list"></ul>
-      <input type="text" id="new-project-input" placeholder="New project">
       <button id="add-project-btn">Add Project</button>
     </aside>
 
     <section id="todos-section">
       <h2 id="current-project-title">Tasks</h2>
       <ul id="todos-list"></ul>
-      <form id="todo-form">
-        <input type="text" id="todo-title-input" placeholder="Title" required>
-        <textarea id="todo-desc-input" placeholder="Description"></textarea>
-        <input type="date" id="todo-due-input">
-        <select id="todo-priority-input">
-          <option value="Low">Low</option>
-          <option value="Medium" selected>Medium</option>
-          <option value="High">High</option>
-        </select>
-        <button type="submit" id="add-todo-btn">Add Task</button>
-      </form>
+      <button id="add-task-btn">Add Task</button>
     </section>
   </main>
+
+  <div id="project-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-project-modal">&times;</span>
+      <h2>Add New Project</h2>
+      <input type="text" id="modal-project-input" placeholder="Project Name">
+      <button id="modal-add-project-btn">Add Project</button>
+    </div>
+  </div>
+
+  <div id="task-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-task-modal">&times;</span>
+      <h2>Add New Task</h2>
+      <input type="text" id="modal-task-title" placeholder="Title" required>
+      <textarea id="modal-task-desc" placeholder="Description"></textarea>
+      <input type="date" id="modal-task-due">
+      <select id="modal-task-priority">
+        <option value="Low">Low</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="High">High</option>
+      </select>
+      <button id="modal-add-task-btn">Add Task</button>
+    </div>
+  </div>
 
   <script src="bundle.js"></script>
 </body>
