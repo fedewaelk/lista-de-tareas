@@ -35,7 +35,8 @@ export function renderProjects() {
     li.appendChild(span);
 
     const delBtn = document.createElement('button');
-    delBtn.textContent = 'Delete';
+    delBtn.textContent = '❌';
+    delBtn.classList.add('delete-btn');
     delBtn.style.marginLeft = '10px';
     delBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -82,7 +83,9 @@ export function renderTasks(title, tasks) {
     li.appendChild(details);
 
     const delBtn = document.createElement('button');
-    delBtn.textContent = 'Delete';
+    delBtn.textContent = '❌';
+    delBtn.style.color = 'red';
+    delBtn.classList.add('delete-btn');
     delBtn.style.marginLeft = '10px';
     delBtn.addEventListener('click', () => {
       const event = new CustomEvent('todoDelete', {

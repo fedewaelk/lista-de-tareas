@@ -78,10 +78,13 @@ input, button {
   }
   
 li {
-    list-style: none; 
+    list-style: none;
     padding: 0.5rem 0;
     border-bottom: 1px solid #ddd;
     margin: 0;
+    display: flex;
+    justify-content: space-between; /* Separa el contenido del botón */
+    align-items: end;
   }
   
 li:last-child {
@@ -91,4 +94,18 @@ li:last-child {
 li:hover {
     background-color: #f9f9f9;
   }
+
+.delete-btn {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin-left: auto;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  
+.delete-btn:hover {
+    background-color: rgb(164, 164, 164);
+  }
+  
   
