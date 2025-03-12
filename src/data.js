@@ -22,9 +22,9 @@ export function addProject(projectName) {
   }
 }
 
-export function addTodo(todoTitle) {
-  if (todoTitle.trim() !== '') {
-    projects[currentProjectIndex].todos.push({ title: todoTitle });
+export function addTodo(todo) {
+  if (todo.title.trim() !== '') {
+    projects[currentProjectIndex].todos.push(todo);
     saveProjects();
   }
 }

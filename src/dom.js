@@ -23,7 +23,9 @@ export function renderCurrentProject(currentProject) {
   todosList.innerHTML = '';
   currentProject.todos.forEach(todo => {
     const li = document.createElement('li');
-    li.textContent = todo.title;
+    li.innerHTML = `<strong>${todo.title}</strong><br>
+                    ${todo.description}<br>
+                    Due Date: ${todo.dueDate} | Priority: ${todo.priority}`;
     todosList.appendChild(li);
   });
 }

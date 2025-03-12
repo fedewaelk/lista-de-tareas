@@ -8,7 +8,6 @@ function init() {
   renderCurrentProject(projects[currentProjectIndex]);
 }
 
-// Agregar nuevo proyecto
 document.getElementById('add-project-btn').addEventListener('click', () => {
   const projectInput = document.getElementById('new-project-input');
   addProject(projectInput.value);
@@ -16,11 +15,14 @@ document.getElementById('add-project-btn').addEventListener('click', () => {
   renderProjects();
 });
 
-// Agregar nueva tarea
-document.getElementById('add-todo-btn').addEventListener('click', () => {
-  const todoInput = document.getElementById('new-todo-input');
-  addTodo(todoInput.value);
-  todoInput.value = '';
+document.getElementById('todo-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const title = document.getElementById('todo-title-input').value;
+  const description = document.getElementById('todo-desc-input').value;
+  const dueDate = document.getElementById('todo-due-input').value;
+  const priority = document.getElementById('todo-priority-input').value;
+  addTodo({ title, description, dueDate, priority });
+  document.getElementById('todo-form').reset();
   renderCurrentProject(projects[currentProjectIndex]);
 });
 

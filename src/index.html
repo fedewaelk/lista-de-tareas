@@ -22,8 +22,17 @@
     <section id="todos-section">
       <h2 id="current-project-title">Tasks</h2>
       <ul id="todos-list"></ul>
-      <input type="text" id="new-todo-input" placeholder="New task">
-      <button id="add-todo-btn">Add Task</button>
+      <form id="todo-form">
+        <input type="text" id="todo-title-input" placeholder="Title" required>
+        <textarea id="todo-desc-input" placeholder="Description"></textarea>
+        <input type="date" id="todo-due-input">
+        <select id="todo-priority-input">
+          <option value="Low">Low</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="High">High</option>
+        </select>
+        <button type="submit" id="add-todo-btn">Add Task</button>
+      </form>
     </section>
   </main>
 
