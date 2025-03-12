@@ -5,46 +5,55 @@ body {
     margin: 0;
   }
   
-  header {
+header {
     background-color: blue;
     color: white;
     padding: 1rem;
     text-align: center;
   }
   
-  main {
+main {
     display: flex;
-    padding: 1rem;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
-  
-  aside, section {
-    flex: 1;
+
+aside, section {
     padding: 1rem;
-    border: 1px solid black;
     margin: 0.5rem;
   }
+
+#projects-section {
+    width: 200px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+}
   
-  input, button {
+input, button {
     padding: 0.5rem;
     margin-top: 0.5rem;
   }
 
-
-  /* Modal general */
 .modal {
-    display: none; /* Oculto por defecto */
+    display: none;
     position: fixed;
-    z-index: 100; /* Por encima de todo */
+    z-index: 100;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.4); /* Fondo semitransparente */
+    background-color: rgba(0,0,0,0.4);
   }
   
-  /* Contenido del modal */
-  .modal-content {
+.modal-content {
     background-color: #fefefe;
     margin: 15% auto;
     padding: 1rem;
@@ -54,18 +63,32 @@ body {
     position: relative;
   }
   
-  /* Botón para cerrar */
-  .close {
+.close {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
   }
-  .close:hover,
-  .close:focus {
+  
+.close:hover,
+.close:focus {
     color: black;
     text-decoration: none;
   }
   
+li {
+    list-style: none; 
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ddd;
+    margin: 0;
+  }
+  
+li:last-child {
+    border-bottom: none;
+  }
+  
+li:hover {
+    background-color: #f9f9f9;
+  }
   
