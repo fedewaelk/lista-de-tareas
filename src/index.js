@@ -15,11 +15,26 @@ import { renderProjects, renderTasks } from './dom.js';
 
 let currentView = { type: 'special', name: 'upcoming' };
 
+function sortTasksByDueDate(tasks) {
+  return tasks.sort((a, b) => {
+    const dateA = a.dueDate ? new Date(a.dueDate) : null;
+    const dateB = b.dueDate ? new Date(b.dueDate) : null;
+    
+    if (!dateA && dateB) return 1;
+    if (dateA && !dateB) return -1;
+    if (!dateA && !dateB) return 0;
+    
+    return dateA - dateB;
+  });
+}
+
 function init() {
   loadProjects();
   renderProjects();
   currentView = { type: 'special', name: 'upcoming' };
-  renderTasks('Upcoming Tasks', getUpcomingTasks());
+  let tasks = getUpcomingTasks();
+  tasks = sortTasksByDueDate(tasks);
+  renderTasks('Upcoming Tasks', tasks);
   document.getElementById('todo-form').style.display = 'none';
 }
 
@@ -44,7 +59,7 @@ document.getElementById('todo-form').addEventListener('submit', (e) => {
     projectIndex: currentView.index,
     taskIndex: idx
   }));
-  renderTasks(`${projects[currentView.index].name} Tasks`, tasks);
+  renderTasks(`${projects[currentView.index].name} Tasks`, sortTasksByDueDate(tasks));
 });
 
 document.addEventListener('projectSelected', (e) => {
@@ -52,9 +67,13 @@ document.addEventListener('projectSelected', (e) => {
     currentView = { type: 'special', name: e.detail.specialName };
     document.getElementById('todo-form').style.display = 'none';
     if (e.detail.specialName === 'upcoming') {
-      renderTasks('Upcoming Tasks', getUpcomingTasks());
+      let tasks = getUpcomingTasks();
+      tasks = sortTasksByDueDate(tasks);
+      renderTasks('Upcoming Tasks', tasks);
     } else if (e.detail.specialName === 'completed') {
-      renderTasks('Completed Tasks', getCompletedTasks());
+      let tasks = getCompletedTasks();
+      tasks = sortTasksByDueDate(tasks);
+      renderTasks('Completed Tasks', tasks);
     }
   } else if (e.detail.type === 'project') {
     currentView = { type: 'project', index: e.detail.index };
@@ -64,7 +83,7 @@ document.addEventListener('projectSelected', (e) => {
       projectIndex: e.detail.index,
       taskIndex: idx
     }));
-    renderTasks(`${projects[e.detail.index].name} Tasks`, tasks);
+    renderTasks(`${projects[e.detail.index].name} Tasks`, sortTasksByDueDate(tasks));
   }
 });
 
@@ -72,9 +91,13 @@ document.addEventListener('todoToggle', (e) => {
   updateTodoCompletion(e.detail.projectIndex, e.detail.taskIndex, e.detail.completed);
   if (currentView.type === 'special') {
     if (currentView.name === 'upcoming') {
-      renderTasks('Upcoming Tasks', getUpcomingTasks());
+      let tasks = getUpcomingTasks();
+      tasks = sortTasksByDueDate(tasks);
+      renderTasks('Upcoming Tasks', tasks);
     } else if (currentView.name === 'completed') {
-      renderTasks('Completed Tasks', getCompletedTasks());
+      let tasks = getCompletedTasks();
+      tasks = sortTasksByDueDate(tasks);
+      renderTasks('Completed Tasks', tasks);
     }
   } else if (currentView.type === 'project') {
     const tasks = projects[currentView.index].todos.map((todo, idx) => ({
@@ -82,7 +105,7 @@ document.addEventListener('todoToggle', (e) => {
       projectIndex: currentView.index,
       taskIndex: idx
     }));
-    renderTasks(`${projects[currentView.index].name} Tasks`, tasks);
+    renderTasks(`${projects[currentView.index].name} Tasks`, sortTasksByDueDate(tasks));
   }
 });
 
@@ -92,7 +115,9 @@ document.addEventListener('projectDelete', (e) => {
   if (currentView.type === 'project' && currentView.index === e.detail.index) {
     currentView = { type: 'special', name: 'upcoming' };
     document.getElementById('todo-form').style.display = 'none';
-    renderTasks('Upcoming Tasks', getUpcomingTasks());
+    let tasks = getUpcomingTasks();
+    tasks = sortTasksByDueDate(tasks);
+    renderTasks('Upcoming Tasks', tasks);
   } else if (currentView.type === 'project' && currentView.index > e.detail.index) {
     currentView.index = currentView.index - 1;
   }
@@ -102,9 +127,13 @@ document.addEventListener('todoDelete', (e) => {
   deleteTodo(e.detail.projectIndex, e.detail.taskIndex);
   if (currentView.type === 'special') {
     if (currentView.name === 'upcoming') {
-      renderTasks('Upcoming Tasks', getUpcomingTasks());
+      let tasks = getUpcomingTasks();
+      tasks = sortTasksByDueDate(tasks);
+      renderTasks('Upcoming Tasks', tasks);
     } else if (currentView.name === 'completed') {
-      renderTasks('Completed Tasks', getCompletedTasks());
+      let tasks = getCompletedTasks();
+      tasks = sortTasksByDueDate(tasks);
+      renderTasks('Completed Tasks', tasks);
     }
   } else if (currentView.type === 'project') {
     const tasks = projects[currentView.index].todos.map((todo, idx) => ({
@@ -112,7 +141,7 @@ document.addEventListener('todoDelete', (e) => {
       projectIndex: currentView.index,
       taskIndex: idx
     }));
-    renderTasks(`${projects[currentView.index].name} Tasks`, tasks);
+    renderTasks(`${projects[currentView.index].name} Tasks`, sortTasksByDueDate(tasks));
   }
 });
 
