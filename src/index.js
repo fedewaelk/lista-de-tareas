@@ -6,6 +6,8 @@ import {
   addTodo,
   setCurrentProjectIndex,
   updateTodoCompletion,
+  deleteProject,
+  deleteTodo,
   getUpcomingTasks,
   getCompletedTasks
 } from './data.js';
@@ -17,8 +19,7 @@ function init() {
   loadProjects();
   renderProjects();
   currentView = { type: 'special', name: 'upcoming' };
-  const tasks = getUpcomingTasks();
-  renderTasks('Upcoming Tasks', tasks);
+  renderTasks('Upcoming Tasks', getUpcomingTasks());
   document.getElementById('todo-form').style.display = 'none';
 }
 
@@ -51,11 +52,9 @@ document.addEventListener('projectSelected', (e) => {
     currentView = { type: 'special', name: e.detail.specialName };
     document.getElementById('todo-form').style.display = 'none';
     if (e.detail.specialName === 'upcoming') {
-      const tasks = getUpcomingTasks();
-      renderTasks('Upcoming Tasks', tasks);
+      renderTasks('Upcoming Tasks', getUpcomingTasks());
     } else if (e.detail.specialName === 'completed') {
-      const tasks = getCompletedTasks();
-      renderTasks('Completed Tasks', tasks);
+      renderTasks('Completed Tasks', getCompletedTasks());
     }
   } else if (e.detail.type === 'project') {
     currentView = { type: 'project', index: e.detail.index };
@@ -73,11 +72,39 @@ document.addEventListener('todoToggle', (e) => {
   updateTodoCompletion(e.detail.projectIndex, e.detail.taskIndex, e.detail.completed);
   if (currentView.type === 'special') {
     if (currentView.name === 'upcoming') {
-      const tasks = getUpcomingTasks();
-      renderTasks('Upcoming Tasks', tasks);
+      renderTasks('Upcoming Tasks', getUpcomingTasks());
     } else if (currentView.name === 'completed') {
-      const tasks = getCompletedTasks();
-      renderTasks('Completed Tasks', tasks);
+      renderTasks('Completed Tasks', getCompletedTasks());
+    }
+  } else if (currentView.type === 'project') {
+    const tasks = projects[currentView.index].todos.map((todo, idx) => ({
+      ...todo,
+      projectIndex: currentView.index,
+      taskIndex: idx
+    }));
+    renderTasks(`${projects[currentView.index].name} Tasks`, tasks);
+  }
+});
+
+document.addEventListener('projectDelete', (e) => {
+  deleteProject(e.detail.index);
+  renderProjects();
+  if (currentView.type === 'project' && currentView.index === e.detail.index) {
+    currentView = { type: 'special', name: 'upcoming' };
+    document.getElementById('todo-form').style.display = 'none';
+    renderTasks('Upcoming Tasks', getUpcomingTasks());
+  } else if (currentView.type === 'project' && currentView.index > e.detail.index) {
+    currentView.index = currentView.index - 1;
+  }
+});
+
+document.addEventListener('todoDelete', (e) => {
+  deleteTodo(e.detail.projectIndex, e.detail.taskIndex);
+  if (currentView.type === 'special') {
+    if (currentView.name === 'upcoming') {
+      renderTasks('Upcoming Tasks', getUpcomingTasks());
+    } else if (currentView.name === 'completed') {
+      renderTasks('Completed Tasks', getCompletedTasks());
     }
   } else if (currentView.type === 'project') {
     const tasks = projects[currentView.index].todos.map((todo, idx) => ({

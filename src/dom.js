@@ -23,14 +23,27 @@ export function renderProjects() {
 
   projects.forEach((project, index) => {
     const li = document.createElement('li');
-    li.textContent = project.name;
-    li.style.cursor = 'pointer';
-    li.addEventListener('click', () => {
+    const span = document.createElement('span');
+    span.textContent = project.name;
+    span.style.cursor = 'pointer';
+    span.addEventListener('click', () => {
       const event = new CustomEvent('projectSelected', {
         detail: { type: 'project', index }
       });
       document.dispatchEvent(event);
     });
+    li.appendChild(span);
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.style.marginLeft = '10px';
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const event = new CustomEvent('projectDelete', { detail: { index } });
+      document.dispatchEvent(event);
+    });
+    li.appendChild(delBtn);
+
     projectsList.appendChild(li);
   });
 }
@@ -61,10 +74,23 @@ export function renderTasks(title, tasks) {
     li.appendChild(checkbox);
 
     const details = document.createElement('div');
+    details.style.display = 'inline-block';
+    details.style.marginLeft = '10px';
     details.innerHTML = `<strong>${todo.title}</strong><br>
                          ${todo.description}<br>
                          Due: ${todo.dueDate} | Priority: ${todo.priority}`;
     li.appendChild(details);
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.style.marginLeft = '10px';
+    delBtn.addEventListener('click', () => {
+      const event = new CustomEvent('todoDelete', {
+        detail: { projectIndex: todo.projectIndex, taskIndex: todo.taskIndex }
+      });
+      document.dispatchEvent(event);
+    });
+    li.appendChild(delBtn);
 
     todosList.appendChild(li);
   });

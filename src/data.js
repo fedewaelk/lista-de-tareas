@@ -37,6 +37,19 @@ export function setCurrentProjectIndex(index) {
   currentProjectIndex = index;
 }
 
+export function deleteProject(index) {
+  projects.splice(index, 1);
+  if (currentProjectIndex >= projects.length) {
+    currentProjectIndex = projects.length - 1;
+  }
+  saveProjects();
+}
+
+export function deleteTodo(projectIndex, taskIndex) {
+  projects[projectIndex].todos.splice(taskIndex, 1);
+  saveProjects();
+}
+
 export function getUpcomingTasks() {
   const upcoming = [];
   projects.forEach((project, pIndex) => {
