@@ -83,7 +83,7 @@ li {
     border-bottom: 1px solid #ddd;
     margin: 0;
     display: flex;
-    justify-content: space-between; /* Separa el contenido del botón */
+    justify-content: space-between;
     align-items: end;
   }
   
@@ -93,6 +93,20 @@ li:last-child {
   
 li:hover {
     background-color: #f9f9f9;
+  }
+
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
+.task-info {
+    flex-grow: 1;
+    margin-left: 10px;
+    text-align: left;
   }
 
 .delete-btn {
