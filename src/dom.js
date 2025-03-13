@@ -60,11 +60,9 @@ export function renderTasks(title, tasks) {
         const li = document.createElement('li');
         li.classList.add('task-item');
       
-        // Creamos el checkbox custom.
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = todo.completed;
-        // Eliminamos la apariencia nativa.
         checkbox.style.appearance = 'none';
         checkbox.style.webkitAppearance = 'none';
         checkbox.style.mozAppearance = 'none';
@@ -77,7 +75,6 @@ export function renderTasks(title, tasks) {
         checkbox.style.backgroundPosition = 'center';
         checkbox.style.backgroundSize = '80%';
       
-        // Función para obtener colores según la prioridad.
         function getPriorityColors(priority) {
           if (priority === 'Low') {
             return { border: 'blue', transparent: 'rgba(0, 0, 255, 0.3)' };
@@ -91,16 +88,26 @@ export function renderTasks(title, tasks) {
         checkbox.style.border = `3px solid ${colors.border}`;
         checkbox.style.backgroundColor = checkbox.checked ? colors.border : colors.transparent;
       
-        // Definimos el SVG del check blanco.
+        const svgCheck = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="${colors.border}">
+        <path d="M6.173 11.414l-3.883-3.883 1.414-1.414 2.469 2.47 5.883-5.883 1.414 1.414z"/></svg>`;
         const svgCheckWhite = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="white">
           <path d="M6.173 11.414l-3.883-3.883 1.414-1.414 2.469 2.47 5.883-5.883 1.414 1.414z"/>
         </svg>`;
+
+    checkbox.addEventListener('mouseover', () => {
+        if (!checkbox.checked) {
+          checkbox.style.backgroundImage = `url("data:image/svg+xml;utf8,${encodeURIComponent(svgCheck)}")`;
+        }
+      });
+      checkbox.addEventListener('mouseout', () => {
+        if (!checkbox.checked) {
+          checkbox.style.backgroundImage = '';
+        }
+      });
       
-        // Función que actualiza el backgroundImage según el estado.
         function updateCheckboxBackground() {
           if (checkbox.checked) {
             checkbox.style.backgroundColor = colors.border;
-            // Generamos la URL de datos para el SVG.
             const svgWhiteURL = 'data:image/svg+xml,' + encodeURIComponent(svgCheckWhite);
             checkbox.style.backgroundImage = `url("${svgWhiteURL}")`;
           } else {
@@ -110,7 +117,6 @@ export function renderTasks(title, tasks) {
         }
         updateCheckboxBackground();
       
-        // Listener para el toggle.
         checkbox.addEventListener('change', () => {
           updateCheckboxBackground();
           const event = new CustomEvent('todoToggle', {
@@ -124,13 +130,11 @@ export function renderTasks(title, tasks) {
         });
         li.appendChild(checkbox);
       
-        // Contenedor de información (solo título y fecha).
         const info = document.createElement('span');
         info.classList.add('task-info');
         info.textContent = `${todo.title} - ${todo.dueDate ? todo.dueDate : ''}`;
         li.appendChild(info);
       
-        // Botón de borrado.
         const delBtn = document.createElement('button');
         delBtn.textContent = '❌';
         delBtn.classList.add('delete-btn');
@@ -144,7 +148,4 @@ export function renderTasks(title, tasks) {
       
         todosList.appendChild(li);
       });
-      
-      
   }
-  
