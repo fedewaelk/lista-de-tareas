@@ -9,7 +9,8 @@ import {
   deleteProject,
   deleteTodo,
   getUpcomingTasks,
-  getCompletedTasks
+  getCompletedTasks,
+  saveProjects
 } from './data.js';
 import { renderProjects, renderTasks } from './dom.js';
 
@@ -19,11 +20,9 @@ function sortTasksByDueDate(tasks) {
   return tasks.sort((a, b) => {
     const dateA = a.dueDate ? new Date(a.dueDate) : null;
     const dateB = b.dueDate ? new Date(b.dueDate) : null;
-    
     if (!dateA && dateB) return 1;
     if (dateA && !dateB) return -1;
     if (!dateA && !dateB) return 0;
-    
     return dateA - dateB;
   });
 }
@@ -33,12 +32,10 @@ document.addEventListener('projectSelected', (e) => {
     currentView = { type: 'special', name: e.detail.specialName };
     document.getElementById('add-task-btn').style.display = 'none';
     if (e.detail.specialName === 'upcoming') {
-      let tasks = getUpcomingTasks();
-      tasks = sortTasksByDueDate(tasks);
+      let tasks = sortTasksByDueDate(getUpcomingTasks());
       renderTasks('Upcoming Tasks', tasks);
     } else if (e.detail.specialName === 'completed') {
-      let tasks = getCompletedTasks();
-      tasks = sortTasksByDueDate(tasks);
+      let tasks = sortTasksByDueDate(getCompletedTasks());
       renderTasks('Completed Tasks', tasks);
     }
   } else if (e.detail.type === 'project') {
@@ -58,14 +55,14 @@ function init() {
   loadProjects();
   renderProjects();
   currentView = { type: 'special', name: 'upcoming' };
-  let tasks = getUpcomingTasks();
-  tasks = sortTasksByDueDate(tasks);
+  let tasks = sortTasksByDueDate(getUpcomingTasks());
   renderTasks('Upcoming Tasks', tasks);
   document.getElementById('project-modal').style.display = 'none';
   document.getElementById('task-modal').style.display = 'none';
+  document.getElementById('edit-task-modal').style.display = 'none';
 }
 
-// --- MODAL LOGIC ---
+// --- MODAL LOGIC FOR ADDING PROJECTS & TASKS ---
 const projectModal = document.getElementById('project-modal');
 const taskModal = document.getElementById('task-modal');
 
@@ -128,41 +125,14 @@ document.getElementById('modal-add-task-btn').addEventListener('click', () => {
   taskModal.style.display = 'none';
 });
 
-document.addEventListener('projectSelected', (e) => {
-  if (e.detail.type === 'special') {
-    currentView = { type: 'special', name: e.detail.specialName };
-    document.getElementById('add-task-btn').style.display = 'none';
-    if (e.detail.specialName === 'upcoming') {
-      let tasks = getUpcomingTasks();
-      tasks = sortTasksByDueDate(tasks);
-      renderTasks('Upcoming Tasks', tasks);
-    } else if (e.detail.specialName === 'completed') {
-      let tasks = getCompletedTasks();
-      tasks = sortTasksByDueDate(tasks);
-      renderTasks('Completed Tasks', tasks);
-    }
-  } else if (e.detail.type === 'project') {
-    currentView = { type: 'project', index: e.detail.index };
-    document.getElementById('add-task-btn').style.display = 'block';
-    const tasks = projects[e.detail.index].todos.map((todo, idx) => ({
-      ...todo,
-      projectIndex: e.detail.index,
-      taskIndex: idx
-    }));
-    renderTasks(`${projects[e.detail.index].name} Tasks`, sortTasksByDueDate(tasks));
-  }
-});
-
 document.addEventListener('todoToggle', (e) => {
   updateTodoCompletion(e.detail.projectIndex, e.detail.taskIndex, e.detail.completed);
   if (currentView.type === 'special') {
     if (currentView.name === 'upcoming') {
-      let tasks = getUpcomingTasks();
-      tasks = sortTasksByDueDate(tasks);
+      let tasks = sortTasksByDueDate(getUpcomingTasks());
       renderTasks('Upcoming Tasks', tasks);
     } else if (currentView.name === 'completed') {
-      let tasks = getCompletedTasks();
-      tasks = sortTasksByDueDate(tasks);
+      let tasks = sortTasksByDueDate(getCompletedTasks());
       renderTasks('Completed Tasks', tasks);
     }
   } else if (currentView.type === 'project') {
@@ -182,8 +152,7 @@ document.addEventListener('projectDelete', (e) => {
     if (currentView.type === 'project' && currentView.index === e.detail.index) {
       currentView = { type: 'special', name: 'upcoming' };
       document.getElementById('add-task-btn').style.display = 'none';
-      let tasks = getUpcomingTasks();
-      tasks = sortTasksByDueDate(tasks);
+      let tasks = sortTasksByDueDate(getUpcomingTasks());
       renderTasks('Upcoming Tasks', tasks);
     } else if (currentView.type === 'project' && currentView.index > e.detail.index) {
       currentView.index = currentView.index - 1;
@@ -196,12 +165,10 @@ document.addEventListener('todoDelete', (e) => {
     deleteTodo(e.detail.projectIndex, e.detail.taskIndex);
     if (currentView.type === 'special') {
       if (currentView.name === 'upcoming') {
-        let tasks = getUpcomingTasks();
-        tasks = sortTasksByDueDate(tasks);
+        let tasks = sortTasksByDueDate(getUpcomingTasks());
         renderTasks('Upcoming Tasks', tasks);
       } else if (currentView.name === 'completed') {
-        let tasks = getCompletedTasks();
-        tasks = sortTasksByDueDate(tasks);
+        let tasks = sortTasksByDueDate(getCompletedTasks());
         renderTasks('Completed Tasks', tasks);
       }
     } else if (currentView.type === 'project') {
@@ -213,6 +180,62 @@ document.addEventListener('todoDelete', (e) => {
       renderTasks(`${projects[currentView.index].name} Tasks`, sortTasksByDueDate(tasks));
     }
   }
+});
+
+// --- EDIT TASK MODAL LOGIC ---
+let currentEditProjectIndex = null;
+let currentEditTaskIndex = null;
+let currentEditTask = null;
+
+document.addEventListener('editTask', (e) => {
+  const { projectIndex, taskIndex } = e.detail;
+  currentEditProjectIndex = projectIndex;
+  currentEditTaskIndex = taskIndex;
+  currentEditTask = projects[projectIndex].todos[taskIndex];
+  
+  document.getElementById('edit-task-title').value = currentEditTask.title;
+  document.getElementById('edit-task-desc').value = currentEditTask.description || "";
+  document.getElementById('edit-task-due').value = currentEditTask.dueDate || "";
+  document.getElementById('edit-task-priority').value = currentEditTask.priority || "Medium";
+  
+  document.getElementById('edit-task-modal').style.display = 'block';
+});
+
+document.getElementById('close-edit-task-modal').addEventListener('click', () => {
+  document.getElementById('edit-task-modal').style.display = 'none';
+});
+
+document.getElementById('save-edit-task-btn').addEventListener('click', () => {
+  const newTitle = document.getElementById('edit-task-title').value.trim();
+  if (!newTitle) {
+    alert("Task title is required.");
+    return;
+  }
+  currentEditTask.title = newTitle;
+  currentEditTask.description = document.getElementById('edit-task-desc').value;
+  currentEditTask.dueDate = document.getElementById('edit-task-due').value;
+  currentEditTask.priority = document.getElementById('edit-task-priority').value;
+  
+  projects[currentEditProjectIndex].todos[currentEditTaskIndex] = currentEditTask;
+  saveProjects();
+  // Actualiza la vista de tareas
+  if (currentView.type === 'project' && currentView.index === currentEditProjectIndex) {
+    const tasks = projects[currentEditProjectIndex].todos.map((todo, idx) => ({
+      ...todo,
+      projectIndex: currentEditProjectIndex,
+      taskIndex: idx
+    }));
+    renderTasks(`${projects[currentEditProjectIndex].name} Tasks`, sortTasksByDueDate(tasks));
+  } else if (currentView.type === 'special') {
+    if (currentView.name === 'upcoming') {
+      let tasks = sortTasksByDueDate(getUpcomingTasks());
+      renderTasks('Upcoming Tasks', tasks);
+    } else if (currentView.name === 'completed') {
+      let tasks = sortTasksByDueDate(getCompletedTasks());
+      renderTasks('Completed Tasks', tasks);
+    }
+  }
+  document.getElementById('edit-task-modal').style.display = 'none';
 });
 
 init();
