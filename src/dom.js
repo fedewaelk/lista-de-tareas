@@ -158,6 +158,21 @@ export function renderTasks(title, tasks) {
       document.dispatchEvent(event);
     });
     li.appendChild(delBtn);
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = '✏️';
+    editBtn.classList.add('edit-btn');
+    editBtn.addEventListener('click', () => {
+      document.getElementById('edit-task-title').value = todo.title;
+      document.getElementById('edit-task-desc').value = todo.description;
+      document.getElementById('edit-task-due').value = todo.dueDate;
+      document.getElementById('edit-task-notes').value = todo.notes;
+      document.getElementById('edit-task-checklist').value = todo.checklist.join('\n');
+      document.getElementById('save-edit-task-btn').dataset.projectIndex = todo.projectIndex;
+      document.getElementById('save-edit-task-btn').dataset.taskIndex = todo.taskIndex;
+      document.getElementById('edit-task-modal').style.display = 'block';
+    });
+    li.appendChild(editBtn);
       
     todosList.appendChild(li);
   });

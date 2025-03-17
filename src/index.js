@@ -238,4 +238,22 @@ document.getElementById('save-edit-task-btn').addEventListener('click', () => {
   document.getElementById('edit-task-modal').style.display = 'none';
 });
 
+document.getElementById('save-edit-task-btn').addEventListener('click', () => {
+  const projectIndex = document.getElementById('save-edit-task-btn').dataset.projectIndex;
+  const taskIndex = document.getElementById('save-edit-task-btn').dataset.taskIndex;
+  
+  const updatedTodo = {
+    title: document.getElementById('edit-task-title').value,
+    description: document.getElementById('edit-task-desc').value,
+    dueDate: document.getElementById('edit-task-due').value,
+    notes: document.getElementById('edit-task-notes').value,
+    checklist: document.getElementById('edit-task-checklist').value.split('\n'),
+    completed: projects[projectIndex].todos[taskIndex].completed
+  };
+  
+  updateTodo(projectIndex, taskIndex, updatedTodo);
+  document.getElementById('edit-task-modal').style.display = 'none';
+  renderTasks(`${projects[projectIndex].name} Tasks`, projects[projectIndex].todos);
+});
+
 init();

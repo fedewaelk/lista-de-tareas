@@ -45,6 +45,11 @@ export function deleteProject(index) {
   saveProjects();
 }
 
+export function updateTodo(projectIndex, todoIndex, updatedTodo) {
+  projects[projectIndex].todos[todoIndex] = updatedTodo;
+  saveProjects();
+}
+
 export function deleteTodo(projectIndex, taskIndex) {
   projects[projectIndex].todos.splice(taskIndex, 1);
   saveProjects();
